@@ -1,4 +1,4 @@
-# pdev_howto# PDev API
+# PDev API
 
 ## Intruções segmentadas para execução do tutorial da API PDev
 
