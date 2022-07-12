@@ -403,10 +403,43 @@ final String[] ADMIN_MATCHERS = { "/api/v1/test/**"};
 
 #### Realize os testes ambos os usuários
 
+### Exceções Customizadas
 
-3. User e Role
-4. Repository
-5.  AutenticacaoService
-6.  Exceptions
-7.  SecurityConfig
-8.  Model Mapper
+As exceções em APIs, se não forem gerenciadas adequadamente podem gerar informações quase que ilígeveis ao usuários. O Spring oferece recursos para capturar exceções e apresentá-las de forma mais amigável no retorno das requisições.
+
+Iremos implementar o `ControllerAdvice`, com ele, podemos capturar exceções específicas e criar respostas mais efetivas que o tradicional Status Code 500. Siga os passos abaixo.
+
+1. Dentro do pacote  `security/config` cria a classe `ExceptionConfig.java`.
+2. Inclua a anotação `@ControllerAdvice` e extenda a classe `ResponseEntityExceptionHandler`.
+
+```java
+@ControllerAdvice
+public class ExceptionConfig extends ResponseEntityExceptionHandler {
+    ...
+}
+```
+
+3. Crie o pacote `security/exceptions`.
+
+4. Crie inicialmente a classe `Error` com iremos realizar um teste de captura de exceptions.
+
+```java
+class Error {
+    public String error;
+
+    public Error(String error) {
+        this.error = error;
+    }
+}
+```
+
+5. Crie o método `acessoNegado`na classe `ExceptionConfig`. Quando uma `AccessDeniedException` for lançada, a saída padrão será substituida pelo Json da classe `Error`.
+
+```java
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Error> accesDenied() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Error("Acesso Negado"));
+    }
+```
+
+#### Realize os testes ambos os usuários e valida a exception para caesso negado.
