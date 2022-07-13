@@ -216,6 +216,8 @@ public class DicasResource {
     private DicasService service;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    private DicasRepository repository;
 
     @GetMapping("/todas")
     public ResponseEntity<?> getAll() {
@@ -273,6 +275,8 @@ public class DicaDTO {
 
 9. Crie o método insert no `DicasResource`, o método irá por meio do service realizar a persistencia, se não ocoreem exceções na requisição, será criado a url do recurso criado para ser incluso no hedaer da requisição. O retorno da requisição irá retornar o estatus code 201 e irá incluir os dados do recurso no corpo da requisição. A anotação `@Valid` irá verificar se os atributos são validos sem precisarmos de lógicas adicionais.
 
+> Observem que utilizamos o ModelMapper para reaqlizar as conversões dos objetos DTOs em Entities e vice-versa.
+
 ```java
     @PostMapping("/nova")
     public ResponseEntity<?> insert(@Valid @RequestBody DicaDTO dto) {
@@ -303,3 +307,83 @@ public class DicaDTO {
   ]
 }
 ```
+
+> Realize as congiruções de segurança para este end-point `http://localhost:9000/api/v1/dicas/nova` para os perfis ADMIN e USER.
+
+11. Crie o método `atualizar` no `DicasService`. Este método deverá buscar uma dica existente com base em seu id, caso ela não exista, um exceção será lançada, caso exista todos as atributos do objeto serão atualizados. A atualização parcial será realizada pelo verbo `PATCH`. 
+
+> Novamente utilizamos as conversões com o ModelMapper.
+
+```java
+public DicaDTO atualizar(Long id, DicaDTO dto) {
+        if(Objects.isNull(id)) {
+            throw new ObjectNotFoundException("ID é obrigatório.");
+        }
+
+        Optional<Dica> optional = repository.findById(id);
+
+        if(optional.isEmpty()) {
+            throw new ObjectNotFoundException("Dica não encontrada no repositório");
+        }
+
+        dto.setId(id);
+
+        Dica entity = repository.save(mapper.map(dto, Dica.class));
+
+        return mapper.map(entity, DicaDTO.class);
+    }
+```
+
+12. Os demais métodos são mais simples, então irei agilizar a implementação dos demais. Inclua o trecho abaixo no `DicasService`.
+
+```java
+    public DicaDTO buscarPorId(Long id) {
+        Optional<Dica> optional = repository.findById(id);
+
+        if(optional.isEmpty()) {
+            throw new ObjectNotFoundException("Dica não encontrada no repositório");
+        }
+
+        return mapper.map(optional.get(), DicaDTO.class);
+    }
+
+    public void apagarPorId(Long id) {
+        Optional<Dica> optional = repository.findById(id);
+
+        if(optional.isEmpty()) {
+            throw new ObjectNotFoundException("Dica não encontrada no repositório para remoção");
+        }
+
+        repository.delete(optional.get());
+    }
+```
+
+13. Inclua os respectivos métodos no `DicasResource`.
+
+```java
+
+    @PutMapping("/dica/{id}")
+    public ResponseEntity<?> update(@Valid @RequestBody DicaDTO dto, @PathVariable("id") Long id) {
+        DicaDTO dica = service.atualizar(id, dto);
+        return ResponseEntity.ok().body(dica);
+    }
+
+    @GetMapping("/dica/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
+    }
+
+    @DeleteMapping("/dica/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        service.apagarPorId(id);
+        return ResponseEntity.ok().build();
+    }
+```
+
+### Testes da API
+
+Realize os testes básico do CRUD com as dicas.
+
+Crie perfis diversos e modifique o `SecurityConfig`.
+
+# PARABÉNS POR CHEGAR ATE AQUI
