@@ -278,7 +278,7 @@ public class DicaDTO {
 > Observem que utilizamos o ModelMapper para reaqlizar as conversões dos objetos DTOs em Entities e vice-versa.
 
 ```java
-    @PostMapping("/nova")
+    @PostMapping("/dica")
     public ResponseEntity<?> insert(@Valid @RequestBody DicaDTO dto) {
 
         Dica entity = service.inserir(dto);
