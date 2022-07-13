@@ -107,6 +107,7 @@ erDiagram
     Dica o--|> Categoria
     class Dica {
         - Long id
+        - String conteudo
         - List~Categoria~ categorias
     }
     class Categoria {
@@ -282,7 +283,7 @@ public class DicaDTO {
 }
 ```
 
-8. Crie o método inserir, este méto pode lanças as exceções `IllegalArgumentException`; já temos um ExcptionHandler para ele.
+8. Crie o método inserir, este méto pode lanças as exceções `IllegalArgumentException`; já temos um `ExcptionHandler` para ele.
 
 ```java
     public Dica inserir(DicaDTO dto) {
@@ -291,9 +292,9 @@ public class DicaDTO {
     }
 ```
 
-9. Crie o método insert no `DicasResource`, o método irá por meio do service realizar a persistencia, se não ocoreem exceções na requisição, será criado a url do recurso criado para ser incluso no hedaer da requisição. O retorno da requisição irá retornar o estatus code 201 e irá incluir os dados do recurso no corpo da requisição. A anotação `@Valid` irá verificar se os atributos são validos sem precisarmos de lógicas adicionais.
+9. Crie o método insert no `DicasResource`, o método irá por meio do service realizar a persistencia, se não ocorrem exceções na requisição, será criado a url do recurso criado para ser incluso no header da requisição. O retorno da requisição irá retornar o estatus code 201 e irá incluir os dados do recurso no corpo da requisição. A anotação `@Valid` irá verificar se os atributos são validos sem precisarmos de lógicas adicionais.
 
-> Observem que utilizamos o ModelMapper para reaqlizar as conversões dos objetos DTOs em Entities e vice-versa.
+> Observem que utilizamos o ModelMapper para realizar as conversões dos objetos DTOs em Entities e vice-versa.
 
 ```java
     @PostMapping("/dica")
@@ -326,7 +327,7 @@ public class DicaDTO {
 }
 ```
 
-> Realize as congiruções de segurança para este end-point `http://localhost:9000/api/v1/dicas/nova` para os perfis ADMIN e USER.
+> Realize as congiruções de segurança para este end-point `http://localhost:9000/api/v1/dicas/dica` para os perfis ADMIN e USER.
 
 11. Crie o método `atualizar` no `DicasService`. Este método deverá buscar uma dica existente com base em seu id, caso ela não exista, um exceção será lançada, caso exista todos as atributos do objeto serão atualizados. A atualização parcial será realizada pelo verbo `PATCH`. 
 
