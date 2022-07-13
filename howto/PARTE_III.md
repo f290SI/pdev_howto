@@ -4,6 +4,24 @@ Nesta seção iremos criar os resources das dicas para nossos Devs; teremos inic
 
 ### Melhorias no ExceptionConfig
 
+#### Atualização das dependencias.
+
+Inclua no arquivo `pom.xml` as dependencias abaixo.
+
+```xml
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.4.4</version>
+		</dependency>
+
+```
+
 Iremos criar nossas exceções com o máximo de informações possíveis para similirade com as exceções padronizadas do Spring Boot. Iremos cria nossa própria classe para representação de exceções.
 
 1. No pacote `security/exceptions` crie a classe `StandardError.java`, nela iremos padronizar os retornos da nossas exceções.
